@@ -24,7 +24,7 @@ jobs:
 
         - name: Install dependencies
           run: |
-            python${{matrix.python-version}} -m pip install ./tomisp
+            python${{matrix.python-version}} -m pip install .
             python${{matrix.python-version}} -m pip install pytest
 
         - name: Run PyTest
