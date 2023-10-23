@@ -1,0 +1,39 @@
+name: Run pytest
+
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+jobs:
+    test:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          python-version: ["3.10", "3.11", "3.12"]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Setup Python ${{ matrix.python-version }}
+          uses: actions/setup-python@v3
+          with:
+            python-version: ${{ matrix.python-version }}
+
+        - name: Install dependencies
+          run: |
+            python${{matrix.python-version}} -m pip install .
+            python${{matrix.python-version}} -m pip install pytest
+
+        - name: Run PyTest
+          run: |
+            python${{matrix.python-version}} -m pytest -v -c=config.ini --junitxml=test-reports/report.xml
+
+        - name: Upload Test Results
+          uses: actions/upload-artifact@v3
+          with:
+            name: PyTestResults-${{matrix.python-version}}
+            path: test-reports/report.xml
+            if-no-files-found: error
